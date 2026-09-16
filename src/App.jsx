@@ -1,7 +1,15 @@
 import { useState } from "react";
 
+import TextInput from "./components/TextInput";
+import LanguageSelector from "./components/LanguageSelector";
+import VoiceSelector from "./components/VoiceSelector";
+import AudioPlayer from "./components/AudioPlayer";
+
 function App() {
   const [text, setText] = useState("");
+  const [language, setLanguage] = useState("en-US");
+  const [voice, setVoice] = useState("female");
+  const [audioUrl, setAudioUrl] = useState("");
 
   return (
     <div className="tts-page">
@@ -30,72 +38,28 @@ function App() {
         {/* Main Card */}
         <div className="tts-card rounded-3xl p-6 md:p-9">
 
-          {/* Text Section */}
-          <div className="mb-8">
-
-            <div className="mb-3 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">
-                  ✏️ Enter your text
-                </h2>
-
-                <p className="mt-1 text-sm text-slate-400">
-                  Type or paste the text you want to convert to speech
-                </p>
-              </div>
-
-              <span className="hidden rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600 md:block">
-                ✨ Multiple languages
-              </span>
-            </div>
-
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Start typing something amazing..."
-              maxLength={5000}
-              rows="8"
-              className="tts-textarea w-full resize-none rounded-2xl border border-slate-200 bg-white p-5 text-slate-700 outline-none"
-            />
-
-            <div className="mt-2 text-right text-sm text-slate-400">
-              {text.length} / 5000 characters
-            </div>
-          </div>
+          {/* Text Input */}
+          <TextInput
+            text={text}
+            setText={setText}
+          />
 
           {/* Language + Voice */}
           <div className="grid gap-6 md:grid-cols-2">
 
-            <div>
-              <label className="mb-3 block text-sm font-bold text-slate-700">
-                🌐 Language
-              </label>
+            <LanguageSelector
+              language={language}
+              setLanguage={setLanguage}
+            />
 
-              <select className="tts-select w-full rounded-xl border border-slate-200 bg-white p-3.5 text-slate-700 outline-none">
-                <option>English</option>
-                <option>Hindi</option>
-                <option>Gujarati</option>
-                <option>Marathi</option>
-                <option>Spanish</option>
-                <option>French</option>
-                <option>German</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="mb-3 block text-sm font-bold text-slate-700">
-                🎙️ Voice
-              </label>
-
-              <select className="tts-select w-full rounded-xl border border-slate-200 bg-white p-3.5 text-slate-700 outline-none">
-                <option>English Female</option>
-                <option>English Male</option>
-              </select>
-            </div>
+            <VoiceSelector
+              voice={voice}
+              setVoice={setVoice}
+            />
 
           </div>
 
-          {/* Generate */}
+          {/* Generate Button */}
           <button
             className="generate-btn mt-7 w-full rounded-xl px-6 py-4 text-lg font-bold text-white"
           >
@@ -103,31 +67,9 @@ function App() {
             <span className="ml-2">→</span>
           </button>
 
-          {/* Audio */}
-          <div className="audio-box mt-8 rounded-2xl p-6">
+          {/* Audio Player */}
+          <AudioPlayer audioUrl={audioUrl} />
 
-            <div className="mb-5">
-              <h2 className="text-lg font-bold text-slate-800">
-                🎵 Generated Audio
-              </h2>
-
-              <p className="mt-1 text-sm text-slate-400">
-                Your generated speech will appear here
-              </p>
-            </div>
-
-            <audio controls className="w-full">
-              <source src="" type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-
-            <button
-              className="download-btn mt-5 rounded-xl border border-emerald-400 px-5 py-3 font-semibold text-emerald-600"
-            >
-              ⬇ Download Audio
-            </button>
-
-          </div>
         </div>
 
         {/* Feature Highlights */}
