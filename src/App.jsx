@@ -11,6 +11,43 @@ function App() {
   const [voice, setVoice] = useState("female");
   const [audioUrl, setAudioUrl] = useState("");
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handleGenerateSpeech = async () => {
+  if (!text.trim()) {
+    setError("Please enter some text before generating speech.");
+    return;
+  }
+
+  setError("");
+
+  try {
+    const response = await fetch("http://localhost:5000/api/tts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text,
+        language,
+        voice,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Something went wrong");
+    }
+
+    console.log("Backend response:", data);
+      setAudioUrl(data.audioUrl || "");
+      setSuccessMessage("✅ Request sent successfully to the speech server.");
+  } catch (error) {
+    console.error("Error generating speech:", error);
+    setError("Unable to connect to the speech server.");
+  }
+};
 
   return (
     <div className="tts-page">
@@ -66,20 +103,18 @@ function App() {
 
           {/* Generate Button */}
           <button
-  onClick={() => {
-    if (!text.trim()) {
-      setError("Please enter some text before generating speech.");
-      return;
-    }
-
-    setError("");
-    console.log("Valid text:", text);
-  }}
+  onClick={handleGenerateSpeech}
   className="generate-btn mt-7 w-full rounded-xl px-6 py-4 text-lg font-bold text-white"
 >
-            🔊 Generate Speech
-            <span className="ml-2">→</span>
-          </button>
+  🔊 Generate Speech
+  <span className="ml-2">→</span>
+</button>
+
+{successMessage && (
+  <div className="mt-4 rounded-xl bg-emerald-50 p-4 text-center text-sm font-semibold text-emerald-600">
+    {successMessage}
+  </div>
+)}
 
           {/* Audio Player */}
           <AudioPlayer audioUrl={audioUrl} />
