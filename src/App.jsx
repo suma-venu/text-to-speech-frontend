@@ -10,6 +10,7 @@ function App() {
   const [language, setLanguage] = useState("en-US");
   const [voice, setVoice] = useState("female");
   const [audioUrl, setAudioUrl] = useState("");
+  const [error, setError] = useState("");
 
   return (
     <div className="tts-page">
@@ -39,10 +40,14 @@ function App() {
         <div className="tts-card rounded-3xl p-6 md:p-9">
 
           {/* Text Input */}
-          <TextInput
-            text={text}
-            setText={setText}
-          />
+         <TextInput
+  text={text}
+  setText={(value) => {
+    setText(value);
+    setError("");
+  }}
+  error={error}
+/>
 
           {/* Language + Voice */}
           <div className="grid gap-6 md:grid-cols-2">
@@ -61,8 +66,17 @@ function App() {
 
           {/* Generate Button */}
           <button
-            className="generate-btn mt-7 w-full rounded-xl px-6 py-4 text-lg font-bold text-white"
-          >
+  onClick={() => {
+    if (!text.trim()) {
+      setError("Please enter some text before generating speech.");
+      return;
+    }
+
+    setError("");
+    console.log("Valid text:", text);
+  }}
+  className="generate-btn mt-7 w-full rounded-xl px-6 py-4 text-lg font-bold text-white"
+>
             🔊 Generate Speech
             <span className="ml-2">→</span>
           </button>

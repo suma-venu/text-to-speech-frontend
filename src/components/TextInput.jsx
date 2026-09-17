@@ -1,4 +1,6 @@
-function TextInput({ text, setText }) {
+function TextInput({ text, setText, error }) {
+  const maxCharacters = 5000;
+
   return (
     <div className="mb-8">
       <div className="mb-3 flex items-center justify-between">
@@ -21,13 +23,33 @@ function TextInput({ text, setText }) {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Start typing something amazing..."
-        maxLength={5000}
+        maxLength={maxCharacters}
         rows="8"
-        className="tts-textarea w-full resize-none rounded-2xl border border-slate-200 bg-white p-5 text-slate-700 outline-none"
+        className={`tts-textarea w-full resize-none rounded-2xl border bg-white p-5 text-slate-700 outline-none ${
+          error
+            ? "border-red-400"
+            : "border-slate-200"
+        }`}
       />
 
-      <div className="mt-2 text-right text-sm text-slate-400">
-        {text.length} / 5000 characters
+      <div className="mt-2 flex items-center justify-between">
+        <div>
+          {error && (
+            <p className="text-sm font-medium text-red-500">
+              ⚠️ {error}
+            </p>
+          )}
+        </div>
+
+        <span
+          className={`text-sm ${
+            text.length >= maxCharacters
+              ? "font-semibold text-red-500"
+              : "text-slate-400"
+          }`}
+        >
+          {text.length} / {maxCharacters} characters
+        </span>
       </div>
     </div>
   );
