@@ -8,46 +8,54 @@ import AudioPlayer from "./components/AudioPlayer";
 function App() {
   const [text, setText] = useState("");
   const [language, setLanguage] = useState("en-US");
-  const [voice, setVoice] = useState("female");
+  const [voice, setVoice] = useState("CwhRBWXzGAHq8TQ4Fs17");
   const [audioUrl, setAudioUrl] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleGenerateSpeech = async () => {
-  if (!text.trim()) {
-    setError("Please enter some text before generating speech.");
-    return;
-  }
-
-  setError("");
-
-  try {
-    const response = await fetch("http://localhost:5000/api/tts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text,
-        language,
-        voice,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Something went wrong");
+    if (!text.trim()) {
+      setError("Please enter some text before generating speech.");
+      setSuccessMessage("");
+      return;
     }
 
-    console.log("Backend response:", data);
-      setAudioUrl(data.audioUrl || "");
-      setSuccessMessage("✅ Request sent successfully to the speech server.");
-  } catch (error) {
-    console.error("Error generating speech:", error);
-    setError("Unable to connect to the speech server.");
-  }
-};
+    setError("");
+    setSuccessMessage("");
+    setAudioUrl("");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/tts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text,
+          language,
+          voice,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Something went wrong");
+      }
+
+      // Receive the generated MP3 audio from the backend
+      const audioBlob = await response.blob();
+
+      // Create a temporary URL for the audio
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      setAudioUrl(audioUrl);
+      setSuccessMessage("✅ Speech generated successfully!");
+    } catch (error) {
+      console.error("Error generating speech:", error);
+      setError(error.message || "Unable to generate speech.");
+      setSuccessMessage("");
+    }
+  };
 
   return (
     <div className="tts-page">
@@ -55,7 +63,6 @@ function App() {
 
         {/* Header */}
         <div className="mb-10 text-center">
-
           <div className="tts-icon">
             🔊
           </div>
@@ -77,18 +84,17 @@ function App() {
         <div className="tts-card rounded-3xl p-6 md:p-9">
 
           {/* Text Input */}
-         <TextInput
-  text={text}
-  setText={(value) => {
-    setText(value);
-    setError("");
-  }}
-  error={error}
-/>
+          <TextInput
+            text={text}
+            setText={(value) => {
+              setText(value);
+              setError("");
+            }}
+            error={error}
+          />
 
           {/* Language + Voice */}
           <div className="grid gap-6 md:grid-cols-2">
-
             <LanguageSelector
               language={language}
               setLanguage={setLanguage}
@@ -98,27 +104,26 @@ function App() {
               voice={voice}
               setVoice={setVoice}
             />
-
           </div>
 
           {/* Generate Button */}
           <button
-  onClick={handleGenerateSpeech}
-  className="generate-btn mt-7 w-full rounded-xl px-6 py-4 text-lg font-bold text-white"
->
-  🔊 Generate Speech
-  <span className="ml-2">→</span>
-</button>
+            onClick={handleGenerateSpeech}
+            className="generate-btn mt-7 w-full rounded-xl px-6 py-4 text-lg font-bold text-white"
+          >
+            🔊 Generate Speech
+            <span className="ml-2">→</span>
+          </button>
 
-{successMessage && (
-  <div className="mt-4 rounded-xl bg-emerald-50 p-4 text-center text-sm font-semibold text-emerald-600">
-    {successMessage}
-  </div>
-)}
+          {/* Success Message */}
+          {successMessage && (
+            <div className="mt-4 rounded-xl bg-emerald-50 p-4 text-center text-sm font-semibold text-emerald-600">
+              {successMessage}
+            </div>
+          )}
 
           {/* Audio Player */}
           <AudioPlayer audioUrl={audioUrl} />
-
         </div>
 
         {/* Feature Highlights */}
@@ -165,7 +170,6 @@ function App() {
           </div>
 
         </div>
-
       </div>
     </div>
   );
