@@ -7,7 +7,7 @@ function AudioPlayer({ audioUrl }) {
         </h2>
 
         <p className="mt-1 text-sm text-slate-400">
-          Your generated speech will appear here
+          Listen to your generated speech below
         </p>
       </div>
 
@@ -15,8 +15,10 @@ function AudioPlayer({ audioUrl }) {
         <>
           <audio
             controls
+            preload="metadata"
             src={audioUrl}
             className="w-full"
+            aria-label="Generated speech audio player"
           >
             Your browser does not support the audio element.
           </audio>
