@@ -14,48 +14,48 @@ function App() {
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleGenerateSpeech = async () => {
-    if (!text.trim()) {
-      setError("Please enter some text before generating speech.");
-      setSuccessMessage("");
-      return;
-    }
-
-    setError("");
+  if (!text.trim()) {
+    setError("Please enter some text before generating speech.");
     setSuccessMessage("");
-    setAudioUrl("");
+    return;
+  }
 
-    try {
-      const response = await fetch("http://localhost:5000/api/tts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text,
-          language,
-          voice,
-        }),
-      });
+  setError("");
+  setSuccessMessage("");
+  setAudioUrl("");
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Something went wrong");
-      }
+  try {
+    const response = await fetch("http://localhost:5000/api/tts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text,
+        language,
+        voice,
+      }),
+    });
 
-      // Receive the generated MP3 audio from the backend
-      const audioBlob = await response.blob();
-
-      // Create a temporary URL for the audio
-      const audioUrl = URL.createObjectURL(audioBlob);
-
-      setAudioUrl(audioUrl);
-      setSuccessMessage("✅ Speech generated successfully!");
-    } catch (error) {
-      console.error("Error generating speech:", error);
-      setError(error.message || "Unable to generate speech.");
-      setSuccessMessage("");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Something went wrong");
     }
-  };
+
+    // Receive the generated MP3 audio from the backend
+    const audioBlob = await response.blob();
+
+    // Create a temporary URL for the audio
+    const audioUrl = URL.createObjectURL(audioBlob);
+
+    setAudioUrl(audioUrl);
+    setSuccessMessage("✅ Speech generated successfully!");
+  } catch (error) {
+    console.error("Error generating speech:", error);
+    setError("Unable to connect to the speech server. Please try again.");
+    setSuccessMessage("");
+  }
+};
 
   return (
     <div className="tts-page">
