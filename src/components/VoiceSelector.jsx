@@ -1,7 +1,13 @@
 function VoiceSelector({ voice, setVoice }) {
   const voices = [
-    { id: "female", name: "Female Voice" },
-    { id: "male", name: "Male Voice" },
+    {
+      id: "hpp4J3VqNfWAUOO0d1Us",
+      name: "Female Voice",
+    },
+    {
+      id: "CwhRBWXzGAHq8TQ4Fs17",
+      name: "Male Voice",
+    },
   ];
 
   return (
