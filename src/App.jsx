@@ -12,6 +12,7 @@ function App() {
   const [audioUrl, setAudioUrl] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGenerateSpeech = async () => {
   if (!text.trim()) {
@@ -23,6 +24,7 @@ function App() {
   setError("");
   setSuccessMessage("");
   setAudioUrl("");
+   setIsLoading(true);
 
   try {
     const response = await fetch("http://localhost:5000/api/tts", {
@@ -54,6 +56,9 @@ function App() {
     console.error("Error generating speech:", error);
     setError("Unable to connect to the speech server. Please try again.");
     setSuccessMessage("");
+  }
+  finally {
+    setIsLoading(false);
   }
 };
 
@@ -107,13 +112,17 @@ function App() {
           </div>
 
           {/* Generate Button */}
-          <button
-            onClick={handleGenerateSpeech}
-            className="generate-btn mt-7 w-full rounded-xl px-6 py-4 text-lg font-bold text-white"
-          >
-            🔊 Generate Speech
-            <span className="ml-2">→</span>
-          </button>
+         <button
+  onClick={handleGenerateSpeech}
+  disabled={isLoading}
+  className={`generate-btn mt-7 w-full rounded-xl px-6 py-4 text-lg font-bold text-white ${
+    isLoading ? "cursor-not-allowed opacity-60" : ""
+  }`}
+>
+  {isLoading ? "⏳ Generating Speech..." : "🔊 Generate Speech"}
+
+  {!isLoading && <span className="ml-2">→</span>}
+</button>
 
           {/* Success Message */}
           {successMessage && (
