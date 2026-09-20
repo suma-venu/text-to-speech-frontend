@@ -1,6 +1,14 @@
 function TextInput({ text, setText, error }) {
   const maxCharacters = 5000;
 
+  const wordCount = text.trim()
+    ? text.trim().split(/\s+/).length
+    : 0;
+
+  const handleClear = () => {
+    setText("");
+  };
+
   return (
     <div className="mb-8">
       <div className="mb-3 flex items-center justify-between">
@@ -26,13 +34,11 @@ function TextInput({ text, setText, error }) {
         maxLength={maxCharacters}
         rows="8"
         className={`tts-textarea w-full resize-none rounded-2xl border bg-white p-5 text-slate-700 outline-none ${
-          error
-            ? "border-red-400"
-            : "border-slate-200"
+          error ? "border-red-400" : "border-slate-200"
         }`}
       />
 
-      <div className="mt-2 flex items-center justify-between">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
         <div>
           {error && (
             <p className="text-sm font-medium text-red-500">
@@ -41,15 +47,33 @@ function TextInput({ text, setText, error }) {
           )}
         </div>
 
-        <span
-          className={`text-sm ${
-            text.length >= maxCharacters
-              ? "font-semibold text-red-500"
-              : "text-slate-400"
-          }`}
-        >
-          {text.length} / {maxCharacters} characters
-        </span>
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Word Count */}
+          <span className="text-sm text-slate-400">
+            {wordCount} {wordCount === 1 ? "word" : "words"}
+          </span>
+
+          {/* Character Count */}
+          <span
+            className={`text-sm ${
+              text.length >= maxCharacters
+                ? "font-semibold text-red-500"
+                : "text-slate-400"
+            }`}
+          >
+            {text.length} / {maxCharacters} characters
+          </span>
+
+          {/* Clear Button */}
+          <button
+            type="button"
+            onClick={handleClear}
+            disabled={!text}
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            🗑️ Clear Text
+          </button>
+        </div>
       </div>
     </div>
   );
