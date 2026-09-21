@@ -24,24 +24,27 @@ function App() {
   setError("");
   setSuccessMessage("");
   setAudioUrl("");
-   setIsLoading(true);
+  setIsLoading(true);
 
   try {
-    const response = await fetch("http://localhost:5000/api/tts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text,
-        language,
-        voice,
-      }),
-    });
+    const response = await fetch(
+      "https://text-to-speech-backend-r4mn.onrender.com/api/tts",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text,
+          language,
+          voice,
+        }),
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || "Something went wrong");
+      throw new Error(errorData.error || "Failed to generate speech");
     }
 
     // Receive the generated MP3 audio from the backend
@@ -54,10 +57,9 @@ function App() {
     setSuccessMessage("✅ Speech generated successfully!");
   } catch (error) {
     console.error("Error generating speech:", error);
-    setError("Unable to connect to the speech server. Please try again.");
+    setError(error.message || "Unable to generate speech.");
     setSuccessMessage("");
-  }
-  finally {
+  } finally {
     setIsLoading(false);
   }
 };

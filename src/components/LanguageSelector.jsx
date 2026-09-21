@@ -3,7 +3,7 @@ function LanguageSelector({ language, setLanguage }) {
     { code: "en-US", name: "English" },
     { code: "hi-IN", name: "Hindi" },
     { code: "kn-IN", name: "Kannada" },
-    { code: "mr-IN", name: "Marathi" },
+    { code: "sv-SE", name: "Swedish" },
     { code: "es-ES", name: "Spanish" },
     { code: "fr-FR", name: "French" },
     { code: "de-DE", name: "German" },

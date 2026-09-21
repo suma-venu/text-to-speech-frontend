@@ -8,7 +8,9 @@ function VoiceSelector({ voice, setVoice }) {
   useEffect(() => {
     const fetchVoices = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/voices");
+       const response = await fetch(
+  "https://text-to-speech-backend-r4mn.onrender.com/api/voices"
+);
 
         if (!response.ok) {
           throw new Error("Failed to fetch voices");
